@@ -13,56 +13,56 @@ app.listen(`${port}`, () => console.log(`listening at http://localhost:${port}`)
 app.use(express.static('public'));
 
 
-let urls = []; //a list of all websites listed 
-let words = [];
-let words_str = "";
 let revision_list = [];
-let difference = "";
-let references = [];
-let final_text = "";
-let array47 = [];
-let text_array = [];
 
 app.post('/wiki_url', (request, response) => {
-  const url = request.body['url'];
-  //console.log(url);
-
-  superagent
-    .get(url)
-    .end((error, res) => {
-        let page_number = Object.keys(res.body.query.pages)[0]; //page number assigned to that particular wikipedia article
-        //let extract = res.body.query.pages[page_number].extract;
-        //let len = res.body.query.pages[page_number].revisions.length;
-        let revisions = res.body.query.pages[page_number].revisions; 
-        //[10]['*']);     this is the last part that it takes to get to the text of the revisions
-        //find_diff(res.body.query.pages["63948073"].revisions[i]['*']), (res.body.query.pages["63948073"].revisions[i+1]['*']);
-        response.send();
+    let page = request.body['url']
+    let url = page.replace(/\/wiki\//, "/w/api.php?format=json&action=query&rvprop=content&rvlimit=500&rvdir=newer&prop=revisions&titles=")
+    console.log(url)
 
 
-        Object.keys(revisions).forEach(function (i) {
-            let revs = revisions[i]['*'];
-            revision_list.push(revs);
-        });
+
+
+
+    superagent
+        .get(url)
+        .end((error, res) => {
+            let page_number = Object.keys(res.body.query.pages)[0]; //page number assigned to that particular wikipedia article
+            //let extract = res.body.query.pages[page_number].extract;
+            //let len = res.body.query.pages[page_number].revisions.length;
+            let revisions = res.body.query.pages[page_number].revisions; 
+            //[10]['*']);     this is the last part that it takes to get to the text of the revisions
+            //find_diff(res.body.query.pages["63948073"].revisions[i]['*']), (res.body.query.pages["63948073"].revisions[i+1]['*']);
+
+            Object.keys(revisions).forEach(function (i) {
+                let revs = revisions[i]['*'];
+                revision_list.push(revs);
+            });
+            
+            let difference = "";
+            for (var i = 0; i < revision_list.length; i++) {
+                Diff.diffWords(revision_list[i], revision_list[++i])
+                .forEach(function(part){
+                let removed = part.removed //boolean value
+                let added = part.added //boolean value
+                if (added || removed) {
+                    difference += part.value + ' ';
+                };
+            });
+        };
+            
+            let word_data = clean(difference);
+            let words_json = { "words" : `${word_data}` } 
+            //console.log(words_json)
         
-        let revision_str = revision_list.join(" ");
-            // console.log(clean(revision_str))
-
-
-        for (var i = 0; i < revision_list.length; i++)
-            Diff.diffWords(revision_list[i], revision_list[++i])
-            .forEach(function(part){
-            let removed = part.removed //boolean value
-            let added = part.added //boolean value
-            if (added || removed) {
-                difference += part.value + ' ';
-                
-            };
+            console.log(difference + word_data + "x")
+            
+            response.send(words_json);
+            
+        
         });
-        console.log(clean(difference))
-        //console.log(difference)
-     });
     
-});
+    });
 
 
 
@@ -83,17 +83,15 @@ app.post('/wiki_url', (request, response) => {
     .replace('reflist', ' ')
     .replace('rfs', ' ')
     .replace(/https?/, ' ')
-    .replace(/\n/g, ' ') //replace new lines with a single space
-    .replace(/  +/g, ' ') //replace multiple spacings with one
+    .replace(/\n/gim, ' ') //replace new lines with a single space
+    .replace(/  +/gim, ' ') //replace multiple spacings with one
     .replace(/\'[s]/gim, " ")
     .replace(/\’[s]/gim, "")
     
 
-    let replace_array = [" a ", " the ", " for ", " but ", " s ", " The ", " of ", " in ", " about ", " On ", " that ", " is ", " are "]
-    for (let i = 0; i < replace_array.length; ++i) {
-        if (text.includes(replace_array[i])) {
-            text = text.replace((replace_array[i]), ' ')
-            }
+    let replace_array = [/\bthe\b/igm, /\ba\b/igm, /\bof\b/igm, /\bfor\b/igm, /\bbut\b/igm, /\bof\b/igm, /\bin\b/igm, /\babout\b/igm, /\bon\b/igm, /\bthat\b/igm, /\bis\b/igm, /\bare\b/igm, /\band\b/igm, /\bto\b/igm, /\bas\b/igm, /\bat\b/igm]
+    for (let i = 0; i < replace_array.length; i++) {
+            text = text.replace((replace_array[i]), '')
     }
     return text;
  };

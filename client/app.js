@@ -1,5 +1,8 @@
 const superagent = require('./node_modules/superagent')
 
+
+
+
 const post_form = document.getElementById('post_form');
 
 
@@ -13,34 +16,40 @@ post_form.addEventListener('submit', function(event) {
       .send(form_json)
       .set('Content-Type', 'application/json')
       .end((err, res) => {
-      })
-    });
+         
+        let text = res.body.words
 
-
-    var text = "This is a paragraph about Brett. Brett is doing some Javascript. Brett likes to write Javascript. Brett likes to eat fajitas. Brett eats a lot. Brett eats a lot while he codes in Javascript. ";
-    var lines = text.split(/[,\. ]+/g);
-    var data = Highcharts.reduce(lines, function (arr, word) {
-        var obj = Highcharts.find(arr, function (obj) {
-            return obj.name === word;
-        });
-        if (obj) {
-            obj.weight += 1;
-        } else {
-            arr.push({
-                name: word,
-                weight: 1
+        console.log(text)
+        var lines = text.split(/[,\. ]+/g);
+        text = "";
+        var data = Highcharts.reduce(lines, function (arr, word) {
+            var obj = Highcharts.find(arr, function (obj) {
+                return obj.name === word;
             });
-        }
-        return arr;
-    }, []);
-    
-    Highcharts.chart('word-cloud', {
-        series: [{
-            type: 'wordcloud',
-            data: data,
-            name: 'Occurrences'
-        }],
-        title: {
-            text: 'Wordcloud of Lorem Ipsum'
-        }
+            if (obj) {
+                obj.weight += 1;
+            } else {
+                arr.push({
+                    name: word,
+                    weight: 1
+                });
+            }
+            return arr;
+        }, []);
+        
+        Highcharts.chart('word-cloud', {
+            series: [{
+                type: 'wordcloud',
+                data: data,
+                name: 'Occurrences'
+            }],
+            title: {
+                text: 'Wiki word cloud stuff'
+            }
+        });
+
+
+
+      });
     });
+ 
