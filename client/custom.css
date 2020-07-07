@@ -2,6 +2,12 @@ body {
     background-color: #274467;
   }
   
+p {
+  color: white;
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
   #form-text {
     width: 900px;
   }
