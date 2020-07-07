@@ -16,7 +16,7 @@
 
   
 ### Installation
-Wiki_words was constructed using [Node.js](https://nodejs.org/) v12.18.2
+Wiki_words was constructed using [Node.js](https://nodejs.org/) v12.16.3
 
 To run this application, install all node modules for the server and client seperately in their respective directories 
 ```sh
