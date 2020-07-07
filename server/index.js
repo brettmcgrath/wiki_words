@@ -4,6 +4,7 @@ const parse = require('body-parser')
 const superagent = require('superagent')
 const Diff = require('diff');
 
+//Sets up express use for API routing and CORS library to prevent CORS issues when running locally
 const app = express();
 app.use(parse.json());
 app.use(cors());
@@ -13,32 +14,29 @@ app.listen(`${port}`, () => console.log(`listening at http://localhost:${port}`)
 app.use(express.static('public'));
 
 
-let revision_list = [];
+let revision_list = []; //an array of revisions to be populated after GET request to Wikipedia API
 
+
+//Listens for POST request from broswer with Wikipedia URL and converts it into a query for GET request below
 app.post('/wiki_url', (request, response) => {
     let page = request.body['url']
     let url = page.replace(/\/wiki\//, "/w/api.php?format=json&action=query&rvprop=content&rvlimit=500&rvdir=newer&prop=revisions&titles=")
-    //console.log(url)
+    
 
-
-
-
-
+//GET request to Wikipedia API
     superagent
         .get(url)
         .end((error, res) => {
             let page_number = Object.keys(res.body.query.pages)[0]; //page number assigned to that particular wikipedia article
-            //let extract = res.body.query.pages[page_number].extract;
-            //let len = res.body.query.pages[page_number].revisions.length;
-            let revisions = res.body.query.pages[page_number].revisions; 
-            //[10]['*']);     this is the last part that it takes to get to the text of the revisions
-            //find_diff(res.body.query.pages["63948073"].revisions[i]['*']), (res.body.query.pages["63948073"].revisions[i+1]['*']);
+            let revisions = res.body.query.pages[page_number].revisions; //accesses revisions object for particular Wikipedia article
 
+            //iterates through revisions and adds them to revision_list array
             Object.keys(revisions).forEach(function (i) {
                 let revs = revisions[i]['*'];
                 revision_list.push(revs);
             });
             
+            //Uses diff library to find the added and removed words from a revision and the revision preceding it
             let difference = "";
             for (var i = 0; i < revision_list.length; i++) {
                 Diff.diffWords(revision_list[i], revision_list[++i])
@@ -50,13 +48,11 @@ app.post('/wiki_url', (request, response) => {
                 };
             });
         };
-            
+            //Uses data cleaning function (see below) to remove unwanted characters and text before converting to JSON to send back to client
             let word_data = clean(difference);
             let words_json = { "words" : `${word_data}` } 
-            //console.log(words_json)
         
-            console.log(word_data)
-            
+            //Sends JSON of cleaned text back to client
             response.send(words_json);
             
         
@@ -65,7 +61,7 @@ app.post('/wiki_url', (request, response) => {
     });
 
 
-
+//Uses regex to clean data of unwanted words, characters, text
  function clean(text) {
     text = text.replace(/\<r.*?>/igm, ' ')
     .replace(/\<\/r.*?>/igm, ' ') //takes out any potential straggling /ref
@@ -89,7 +85,7 @@ app.post('/wiki_url', (request, response) => {
     .replace(/\’[s]/gim, "")
     .replace(/[^\w\d\-]/gim, " ")
     
-
+    //specific words to be removed from data visualizations
     let replace_array = [/\bthe\b/igm, /\ba\b/igm, /\bof\b/igm, /\bfor\b/igm, /\bbut\b/igm, /\bof\b/igm, /\bin\b/igm, 
         /\babout\b/igm, /\bon\b/igm, /\bthat\b/igm, /\bis\b/igm, /\bare\b/igm, /\band\b/igm, /\bto\b/igm, /\bas\b/igm, 
         /\bat\b/igm, /\bher\b/igm, /\bit\b/igm, /\bhave\b/igm, /\bhas\b/igm, /\bhad\b/igm, /\bonly\b/igm, /\bbe\b/igm,
