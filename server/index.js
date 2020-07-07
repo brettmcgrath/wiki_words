@@ -18,7 +18,7 @@ let revision_list = [];
 app.post('/wiki_url', (request, response) => {
     let page = request.body['url']
     let url = page.replace(/\/wiki\//, "/w/api.php?format=json&action=query&rvprop=content&rvlimit=500&rvdir=newer&prop=revisions&titles=")
-    console.log(url)
+    //console.log(url)
 
 
 
@@ -55,7 +55,7 @@ app.post('/wiki_url', (request, response) => {
             let words_json = { "words" : `${word_data}` } 
             //console.log(words_json)
         
-            console.log(difference + word_data + "x")
+            console.log(word_data)
             
             response.send(words_json);
             
@@ -87,11 +87,17 @@ app.post('/wiki_url', (request, response) => {
     .replace(/  +/gim, ' ') //replace multiple spacings with one
     .replace(/\'[s]/gim, " ")
     .replace(/\’[s]/gim, "")
+    .replace(/[^\w\d\-]/gim, " ")
     
 
-    let replace_array = [/\bthe\b/igm, /\ba\b/igm, /\bof\b/igm, /\bfor\b/igm, /\bbut\b/igm, /\bof\b/igm, /\bin\b/igm, /\babout\b/igm, /\bon\b/igm, /\bthat\b/igm, /\bis\b/igm, /\bare\b/igm, /\band\b/igm, /\bto\b/igm, /\bas\b/igm, /\bat\b/igm]
+    let replace_array = [/\bthe\b/igm, /\ba\b/igm, /\bof\b/igm, /\bfor\b/igm, /\bbut\b/igm, /\bof\b/igm, /\bin\b/igm, 
+        /\babout\b/igm, /\bon\b/igm, /\bthat\b/igm, /\bis\b/igm, /\bare\b/igm, /\band\b/igm, /\bto\b/igm, /\bas\b/igm, 
+        /\bat\b/igm, /\bher\b/igm, /\bit\b/igm, /\bhave\b/igm, /\bhas\b/igm, /\bhad\b/igm, /\bonly\b/igm, /\bbe\b/igm,
+        /\bhe\b/igm, /\bshe\b/igm, /\ban\b/igm, /\bit\b/igm, /\bif\b/igm, /\bmore\b/igm, /\bwhen\b/igm, /\bwhere\b/igm,
+        /\bwere\b/igm, /\bwhere\b/igm, /\bhow\b/igm, /\btheir\b/igm, /\bthere\b/igm, /\bgo\b/igm, /\bgoes\b/igm, /\bwent\b/igm,
+        /\bahed\b/igm, /\bvery\b/igm, /\bmuch\b/igm, /\bcom\b/igm]
     for (let i = 0; i < replace_array.length; i++) {
             text = text.replace((replace_array[i]), '')
     }
-    return text;
+    return text.trim();
  };
