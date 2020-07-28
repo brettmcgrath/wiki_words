@@ -20,12 +20,12 @@ Wiki_words was constructed using [Node.js](https://nodejs.org/) v12.16.3
 
 To run this application, open a command prompt and install all node modules for the server and client seperately in their respective directories 
 ```sh
-$ cd ../client
+$ cd client
 $ npm install
 ```
 
 ```sh
-$ cd server
+$ cd ../server
 $ npm install
 ```
 
