@@ -54,6 +54,7 @@ app.post('/wiki_url', (request, response) => {
         
             //Sends JSON of cleaned text back to client
             response.send(words_json);
+            console.log(`revisions for ${page} received, cleaned, and sent to browser`);
             
         
         });
@@ -81,9 +82,10 @@ app.post('/wiki_url', (request, response) => {
     .replace(/https?/, ' ')
     .replace(/\n/gim, ' ') //replace new lines with a single space
     .replace(/  +/gim, ' ') //replace multiple spacings with one
-    .replace(/\'[s]/gim, " ")
-    .replace(/\’[s]/gim, "")
+    .replace(/\'[s]/gim, " ") //replace apostrophe
+    .replace(/\’[s]/gim, "") //replace apostrophe type 2
     .replace(/[^\w\d\-]/gim, " ")
+    .replace(/[^\w-]/gim, " ") //replaces all non-word characters but - 
     
     //specific words to be removed from data visualizations
     let replace_array = [/\bthe\b/igm, /\ba\b/igm, /\bof\b/igm, /\bfor\b/igm, /\bbut\b/igm, /\bof\b/igm, /\bin\b/igm, 
@@ -91,7 +93,10 @@ app.post('/wiki_url', (request, response) => {
         /\bat\b/igm, /\bher\b/igm, /\bit\b/igm, /\bhave\b/igm, /\bhas\b/igm, /\bhad\b/igm, /\bonly\b/igm, /\bbe\b/igm,
         /\bhe\b/igm, /\bshe\b/igm, /\ban\b/igm, /\bit\b/igm, /\bif\b/igm, /\bmore\b/igm, /\bwhen\b/igm, /\bwhere\b/igm,
         /\bwere\b/igm, /\bwhere\b/igm, /\bhow\b/igm, /\btheir\b/igm, /\bthere\b/igm, /\bgo\b/igm, /\bgoes\b/igm, /\bwent\b/igm,
-        /\bahed\b/igm, /\bvery\b/igm, /\bmuch\b/igm, /\bcom\b/igm]
+        /\bahed\b/igm, /\bvery\b/igm, /\bmuch\b/igm, /\bcom\b/igm, /\bs\b/igm, /\bwas\b/igm, /\bfrom\b/igm, /\bwho\b/igm, /\bwhich\b/igm,
+        /\bor\b/igm, /\bthem\b/igm, /\bdo\b/igm, /\bthey\b/igm, /\bhis\b/igm, /\bwith\b/igm, /\bnot\b/igm, /\bgood\b/igm]
+
+
     for (let i = 0; i < replace_array.length; i++) {
             text = text.replace((replace_array[i]), '')
     }

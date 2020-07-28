@@ -10,7 +10,6 @@ post_form.addEventListener('submit', function(event) {
     event.preventDefault();
     const form_data = document.getElementById('wiki_url').value; 
     const form_json = { "url" : `${form_data}` } //creates JSON object from form data in preparation to send to node server
-    console.log(`this is form json ${form_json}`);
     superagent
       .post('http://127.0.0.1:8080/wiki_url') //POST request to node server containing Wikipedia URL
       .send(form_json)
@@ -30,7 +29,6 @@ post_form.addEventListener('submit', function(event) {
         
         //Sorts Keys by word prevalance in descending order
         sorted_keys = Object.keys(metadata).sort(function(a,b){return metadata[b]-metadata[a]})
-        console.log(sorted_keys);   
 
         //Creates a total of word instances to use as a denominator while calculating percent of word frequency
         let reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -40,10 +38,8 @@ post_form.addEventListener('submit', function(event) {
         for (var i = 0; i < Object.keys(metadata).length; i++) {
             if (Object.keys(metadata)[i] == sorted_keys[0]) {
             new_array.push({name: Object.keys(metadata)[i], y: (Object.values(metadata)[i]/total)*100, sliced: true, selected: true})
-            console.log("pushed")
             } else {
                 new_array.push({name: Object.keys(metadata)[i], y: (Object.values(metadata)[i]/total)*100})
-                console.log("ok")
             }
         }
 
