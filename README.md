@@ -18,20 +18,19 @@
 ### Installation
 Wiki_words was constructed using [Node.js](https://nodejs.org/) v12.16.3
 
-To run this application, install all node modules for the server and client seperately in their respective directories 
+To run this application, open a command prompt and install all node modules for the server and client seperately in their respective directories 
+```sh
+$ cd ../client
+$ npm install
+```
+
 ```sh
 $ cd server
 $ npm install
 ```
 
+Run a node instance of index.js while still in the server directory
 ```sh
-$ cd client
-$ npm install
-```
-
-Open a command prompt, cd into the server directory, and run a node instance of index.js
-```sh
-$ cd server
 $ node index.js
 ```
 The server runs on http://localhost:8080
