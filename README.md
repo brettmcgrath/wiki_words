@@ -2,9 +2,10 @@
 
 ### Premise
 
-  - Full stack JavaScript application
+This project is in fulfillment of the requirements of a final project for the Code Louisville JavaScript course. Additionally this project:
+  - Is my first full stack JavaScript application
   - Uses the Wikipedia API to access the added and deleted content of up to 500 Wikipedia revisions
-  - Designed to give data visualizations showing possible trends in the most added and removed words in     Wikipedia revisions for the purpose of possibly detecting areas of contention or merely overusage of     certain words.
+  - Is designed to give data visualizations showing possible trends in the most added and removed words in     Wikipedia revisions for the purpose of possibly detecting areas of contention or merely overusage of certain words.
 
 ### Code Louisville Requirements Fulfilled
 
